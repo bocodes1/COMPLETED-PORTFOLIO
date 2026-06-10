@@ -32,6 +32,19 @@ export function Experience() {
                   </div>
                 ))}
               </dl>
+              {experience.video && (
+                <figure className="mt-6">
+                  <figcaption className="meta-label mb-2">demo</figcaption>
+                  <video
+                    src={experience.video}
+                    controls
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="w-full max-w-2xl rounded-[4px] border border-line bg-bg"
+                  />
+                </figure>
+              )}
             </div>
             <p className="meta-label sm:pt-1 sm:text-right">{experience.timeline}</p>
           </div>

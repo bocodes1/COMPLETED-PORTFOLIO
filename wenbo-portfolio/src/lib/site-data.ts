@@ -19,7 +19,16 @@ export interface ProjectEntry {
   link?: { label: string; url: string };
   /** flagship card spans the full grid width */
   featured?: boolean;
+  /** demo video under /public — drop a file in and reference it here */
+  video?: string;
 }
+
+/*
+ * TODO: demo videos still to record (no footage exists yet):
+ *   cex-lag-bot, borina-mesh, coordlayer, returnclip, r0am
+ * RCDEMO.mp4 exists but belongs to Refined Concept, which spec §6.5
+ * intentionally removed — do not re-add it.
+ */
 
 export const projects: ProjectEntry[] = [
   {
@@ -102,6 +111,7 @@ export const experience = {
     { label: "built", value: "Shopify storefront · GA4/GTM" },
     { label: "outcome", value: "launched · growing social presence" },
   ],
+  video: "/assets/work/guyu/GUYUDEMO.mp4",
 };
 
 /** §3.7 — order matters: Programming/Systems leads, Creative last */

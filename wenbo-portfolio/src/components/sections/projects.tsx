@@ -21,6 +21,19 @@ function ProjectCard({ project }: { project: ProjectEntry }) {
             </div>
           ))}
         </dl>
+        {project.video && (
+          <figure className="mt-5">
+            <figcaption className="meta-label mb-2">demo</figcaption>
+            <video
+              src={project.video}
+              controls
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full rounded-[4px] border border-line bg-bg"
+            />
+          </figure>
+        )}
         {project.link && (
           <p className="quiet-link mt-4 text-[12px]">{project.link.label} →</p>
         )}
