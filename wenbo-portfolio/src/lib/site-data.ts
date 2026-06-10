@@ -21,6 +21,8 @@ export interface ProjectEntry {
   featured?: boolean;
   /** demo video under /public — drop a file in and reference it here */
   video?: string;
+  /** repo exists but is private — modal says so instead of linking */
+  privateRepo?: boolean;
 }
 
 /*
@@ -43,6 +45,7 @@ export const projects: ProjectEntry[] = [
       { label: "edge", value: "confidence-gated 0.50–0.60" },
     ],
     // TODO: add GitHub link when the repo goes public (verified private as of 2026-06-10)
+    privateRepo: true,
     featured: true,
   },
   {
@@ -69,6 +72,7 @@ export const projects: ProjectEntry[] = [
       { label: "status", value: "MVP shipped on Fly.io" },
       { label: "scope", value: "cross-machine sync" },
     ],
+    privateRepo: true,
   },
   {
     id: "returnclip",

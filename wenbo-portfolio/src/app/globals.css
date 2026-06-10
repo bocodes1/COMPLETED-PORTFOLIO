@@ -257,6 +257,31 @@
 .gengar-enter { animation: shadow-fade-up 0.7s ease-out both; }
 .gengar-exit  { animation: shadow-dissolve 0.9s ease-in both; }
 
+/* ─── Modal window ─── */
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.modal-enter { animation: modal-in 0.22s ease-out both; }
+
+/* ─── Quiet bordered button ─── */
+.btn-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  background: var(--bg-titlebar);
+  color: var(--ink);
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.btn-quiet:hover {
+  border-color: var(--ink-mid);
+  transform: translateY(-1px);
+}
+
 /* ─── Quiet text link ─── */
 .quiet-link {
   display: inline-block;
