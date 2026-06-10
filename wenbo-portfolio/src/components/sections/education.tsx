@@ -1,67 +1,30 @@
-"use client";
+import { Reveal } from "@/components/ui/reveal";
+import { education } from "@/lib/site-data";
 
-import { motion } from "framer-motion";
-import { SectionReveal, RevealItem } from "@/components/ui/section-reveal";
-import { Prompt } from "@/components/ui/terminal";
-import { education } from "@/lib/project-data";
-import { GraduationCap, Building } from "lucide-react";
-
+/** §3.8 */
 export function Education() {
   return (
-    <section id="education" className="relative py-28 md:py-36">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-px bg-gradient-to-r from-transparent via-border-strong to-transparent" />
-
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <SectionReveal>
-          <RevealItem>
-            <div className="mb-14 flex flex-col gap-4">
-              <Prompt path="~/background" command="tail -f edu.log" />
-              <div className="border-b border-border pb-5">
-                <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight text-foreground">
-                  Education
-                </h2>
+    <section id="education" className="mx-auto max-w-5xl scroll-mt-20 px-5 pb-28 sm:px-8 sm:pb-36">
+      <Reveal>
+        <h2 className="font-display bloom mb-10 text-3xl font-light text-ink sm:text-4xl">
+          Education
+        </h2>
+      </Reveal>
+      <div className="divide-y divide-line border-y border-line">
+        {education.map((e, i) => (
+          <Reveal key={e.school} delay={i * 60}>
+            <div className="grid gap-2 py-6 md:grid-cols-[1fr_auto] md:items-baseline">
+              <div>
+                <h3 className="font-display text-lg text-ink">{e.school}</h3>
+                <p className="mt-1 text-[12.5px] text-ink-mid">{e.credential}</p>
+                <p className="mt-2 max-w-[60ch] text-[12px] leading-[1.7] text-ink-dim">
+                  {e.note}
+                </p>
               </div>
+              <span className="meta-label">{e.status}</span>
             </div>
-          </RevealItem>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl">
-            {education.map((edu) => (
-              <RevealItem key={edu.school}>
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="group relative h-full p-7 border border-border bg-card hover:border-accent/50 transition-colors duration-500"
-                >
-                  <span className="absolute top-0 left-0 h-px w-0 bg-accent group-hover:w-full transition-all duration-500 shadow-[0_0_12px_var(--accent-glow)]" />
-
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-11 h-11 rounded-sm border border-border bg-background flex items-center justify-center text-fg-dim group-hover:text-accent group-hover:border-accent/40 transition-colors duration-500">
-                      {edu.isCurrent ? (
-                        <GraduationCap size={20} strokeWidth={1.5} />
-                      ) : (
-                        <Building size={20} strokeWidth={1.5} />
-                      )}
-                    </div>
-                    <span
-                      className={`font-mono text-[10px] font-semibold tracking-[0.15em] uppercase px-2.5 py-1 rounded-sm border ${
-                        edu.isCurrent
-                          ? "border-accent/40 text-accent bg-accent/5"
-                          : "border-border text-fg-dim bg-background"
-                      }`}
-                    >
-                      {edu.isCurrent && <span className="inline-block w-1.5 h-1.5 bg-accent pulse-dot mr-1.5 align-middle" />}
-                      {edu.status}
-                    </span>
-                  </div>
-
-                  <h3 className="font-mono text-lg text-foreground mb-1 tracking-tight">{edu.school}</h3>
-                  <p className="font-mono text-sm text-accent-2/80 mb-3">{edu.degree}</p>
-                  <p className="text-sm text-fg-dim leading-relaxed">{edu.description}</p>
-                </motion.div>
-              </RevealItem>
-            ))}
-          </div>
-        </SectionReveal>
+          </Reveal>
+        ))}
       </div>
     </section>
   );

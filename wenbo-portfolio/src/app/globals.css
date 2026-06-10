@@ -1,83 +1,72 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
-/* ─────────────────────────────────────────────
-   wenbo@toronto:~$  —  Terminal / anime-tech theme
-   ───────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   wenbozhao.ca — monotone / Mac-UI / tactile-CRT
+   Palette is spec §2 verbatim. No color. Personality comes from
+   typography, window chrome, the CRT whisper, and spacing rhythm.
+   ───────────────────────────────────────────────────────────── */
 
 @theme inline {
-  --color-background: var(--bg);
-  --color-foreground: var(--fg);
-  --color-fg-dim: var(--fg-dim);
-  --color-fg-faint: var(--fg-faint);
-  --color-card: var(--card);
-  --color-elev: var(--bg-elev);
+  --color-bg: var(--bg);
+  --color-panel: var(--bg-panel);
+  --color-titlebar: var(--bg-titlebar);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-mid: var(--ink-mid);
+  --color-ink-dim: var(--ink-dim);
   --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
+  --color-signal: var(--signal);
 
-  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --font-display: var(--font-chakra), var(--font-jetbrains), monospace;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-display: var(--font-fraunces), Georgia, serif;
 
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
+  --radius-window: 6px;
 }
 
-/* ─── Design Tokens ─── */
 :root {
-  --bg: #08080b;
-  --bg-elev: #0d0d11;
-  --fg: #e9e9ec;
-  --fg-dim: #8a8a96;
-  --fg-faint: #4e4e59;
-  --card: #0b0b0f;
+  --bg: #1c1c1e;
+  --bg-panel: #242426;
+  --bg-titlebar: #2c2c2e;
+  --line: #3a3a3c;
+  --ink: #e6e6e6;
+  --ink-mid: #a0a0a2;
+  /* spec §2 lists #6e6e70, but that fails the §4 WCAG AA floor (~3.3:1 on
+     --bg); lightened to the nearest passing warm gray */
+  --ink-dim: #8e8e90;
+  --accent: #d4d4d4;
+  --signal: #8a8a8a;
 
-  --accent: #ff2e88;            /* magenta — the one and only accent */
-  --accent-2: #b6b6c0;          /* neutral grey — no second colour */
-  --accent-glow: rgba(255, 46, 136, 0.30);
-  --accent-2-glow: rgba(255, 255, 255, 0);
-
-  --border: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.12);
-
-  --grid-line: rgba(255, 255, 255, 0.013);
-  --grain-opacity: 0.022;
+  --shadow-window: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
 }
 
-/* ─── Base ─── */
 @layer base {
   * {
-    @apply border-border;
     box-sizing: border-box;
+    border-color: var(--line);
   }
 
   html {
-    @apply antialiased;
-    font-family: var(--font-mono);
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-background text-foreground;
+    background: var(--bg);
+    color: var(--ink);
     font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.65;
     overflow-x: hidden;
-    font-feature-settings: "liga" 0, "calt" 0; /* terminal: no ligatures */
-    letter-spacing: -0.01em;
   }
 
   ::selection {
-    background: var(--accent);
-    color: #08080b;
+    background: var(--ink);
+    color: var(--bg);
   }
 }
 
-/* ─── Reduced motion ─── */
+/* ─── Reduced motion: kill all animation ─── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -87,114 +76,180 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* ─── Scrollbar ─── */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 0;
+  background: var(--line);
+  border-radius: 5px;
+  border: 2px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-dim); }
 
-/* ─── Focus ─── */
+/* ─── Keyboard focus (spec §4) ─── */
 :focus-visible {
-  outline: 1px solid var(--accent);
+  outline: 1px solid var(--ink);
   outline-offset: 3px;
+  border-radius: 1px;
 }
 
-/* ─── Cursor (custom block on desktop) ─── */
-@media (pointer: fine) {
-  body { cursor: none; }
-  a, button, [role="button"], input, select, textarea { cursor: none; }
-}
-
-/* ─── Typography helpers ─── */
+/* ─── Type helpers ─── */
 .font-display {
-  font-family: var(--font-chakra), var(--font-jetbrains), ui-monospace, monospace;
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
 }
 .tabular { font-variant-numeric: tabular-nums; }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* metadata label — the quiet uppercase mono voice */
+.meta-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
 }
 
-/* ─── Accent glows (restrained) ─── */
-.glow-accent { text-shadow: 0 0 22px var(--accent-glow); }
-.glow-accent-2 { text-shadow: none; }
-.glow-box { box-shadow: 0 0 0 1px var(--accent), 0 0 24px -8px var(--accent-glow); }
-
-/* ─── Terminal block cursor (text) ─── */
-.caret::after {
-  content: "";
-  display: inline-block;
-  width: 0.58em;
-  height: 1.05em;
-  margin-left: 0.12em;
-  translate: 0 0.16em;
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent-glow);
-  animation: caret-blink 1.05s steps(1) infinite;
-}
-@keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-
-/* ─── Background grid ─── */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
+/* ─── Phosphor bloom: grayscale softness on big display type only ─── */
+.bloom {
+  text-shadow: 0 0 18px rgba(230, 230, 230, 0.16), 0 0 2px rgba(230, 230, 230, 0.12);
 }
 
-/* ─── Scanlines ─── */
-.scanlines::before {
+/* ─── CRT overlay (single fixed element, whisper-level) ─── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+}
+.crt-overlay::before {
+  /* scanlines */
   content: "";
   position: absolute;
   inset: 0;
-  pointer-events: none;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.025) 0px,
-    rgba(255, 255, 255, 0.025) 1px,
+    rgba(0, 0, 0, 0.16) 0px,
+    rgba(0, 0, 0, 0.16) 1px,
     transparent 1px,
     transparent 3px
   );
-  mix-blend-mode: overlay;
-  opacity: 0.28;
+  mix-blend-mode: multiply;
+  opacity: 0.22;
 }
-
-/* ─── Grain ─── */
-.grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px;
-}
-
-/* ─── Glitch (anime title) ─── */
-@keyframes glitch-x {
-  0%, 92%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
-  93% { clip-path: inset(8% 0 70% 0); transform: translate(-3px, 0); }
-  95% { clip-path: inset(60% 0 8% 0); transform: translate(3px, 0); }
-  97% { clip-path: inset(30% 0 40% 0); transform: translate(-2px, 0); }
-}
-.glitch { position: relative; }
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
+.crt-overlay::after {
+  /* edge vignette */
+  content: "";
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  background: radial-gradient(
+    ellipse 120% 100% at 50% 45%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.26) 100%
+  );
 }
-.glitch::before { color: var(--accent-2); mix-blend-mode: screen; animation: glitch-x 5.5s infinite linear; }
-.glitch::after { color: var(--accent); mix-blend-mode: screen; animation: glitch-x 5.5s infinite linear reverse; animation-delay: 0.1s; }
 
-/* ─── Marquee (status ticker) ─── */
-@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.marquee { animation: marquee 30s linear infinite; }
+/* ─── Mac window chrome ─── */
+.mac-window {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-window);
+  box-shadow: var(--shadow-window);
+  overflow: hidden;
+}
+.mac-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 14px;
+  background: var(--bg-titlebar);
+  border-bottom: 1px solid var(--line);
+}
+.mac-dots { display: flex; gap: 7px; flex-shrink: 0; }
+.mac-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--ink-dim);
+  background: transparent;
+}
+.mac-dot:nth-child(2) { background: var(--line); }
+.mac-dot:nth-child(3) { background: var(--ink-dim); opacity: 0.5; }
+.mac-title {
+  font-size: 11px;
+  color: var(--ink-mid);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-/* ─── Soft pulse ─── */
-@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-.pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+/* ─── The one blinking cursor (hero) + console caret ─── */
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.95em;
+  margin-left: 0.15em;
+  transform: translateY(0.12em);
+  background: var(--ink);
+  animation: caret-blink 1.1s steps(1) infinite;
+}
+@keyframes caret-blink {
+  0%, 49% { opacity: 0.9; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ─── The single quiet live indicator (bot panel only) ─── */
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--signal);
+  animation: live-breathe 2.8s ease-in-out infinite;
+}
+@keyframes live-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ─── Scroll reveal (IntersectionObserver adds .is-visible) ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Gengar materialize / dissolve ─── */
+@keyframes shadow-fade-up {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); filter: blur(3px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes shadow-dissolve {
+  from { opacity: 1; filter: blur(0); }
+  to   { opacity: 0; filter: blur(5px); }
+}
+.gengar-enter { animation: shadow-fade-up 0.7s ease-out both; }
+.gengar-exit  { animation: shadow-dissolve 0.9s ease-in both; }
+
+/* ─── Quiet text link ─── */
+.quiet-link {
+  color: var(--ink-mid);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+.quiet-link:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink-mid);
+}

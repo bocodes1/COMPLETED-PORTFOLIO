@@ -1,53 +1,52 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Chakra_Petch } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
+  axes: ["SOFT", "opsz"],
 });
 
-const chakra = Chakra_Petch({
-  variable: "--font-chakra",
-  weight: ["500", "600", "700"],
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Wenbo Zhao | Business Builder & Creative Strategist",
+  title: "Wen Bo Zhao — Builder · Quant-Track Developer",
   description:
-    "Wenbo Zhao — I design and build businesses combining marketing, creative strategy, and full-stack execution. Based in Toronto, Canada.",
+    "Wen Bo Zhao. Commerce at UofT. I build and ship real things end-to-end — a low-latency trading engine, a multi-agent ops platform, full products. Technical depth, business judgment, fast execution.",
   keywords: [
-    "business building",
-    "marketing strategy",
-    "creative direction",
-    "front-end development",
-    "ecommerce",
-    "Toronto",
-    "Wenbo Zhao",
-    "portfolio",
-    "full-stack",
-    "Shopify",
+    "Wen Bo Zhao",
+    "quant developer",
+    "trading systems",
+    "low-latency",
+    "builder",
     "Next.js",
-    "React",
+    "Python",
+    "Toronto",
+    "Vancouver",
+    "University of Toronto",
   ],
-  authors: [{ name: "Wenbo Zhao" }],
+  authors: [{ name: "Wen Bo Zhao" }],
   openGraph: {
-    title: "Wenbo Zhao | Business Builder & Creative Strategist",
+    title: "Wen Bo Zhao — Builder · Quant-Track Developer",
     description:
-      "I design and build businesses — combining marketing, creative strategy, and full-stack execution.",
+      "I ship businesses — and systems that trade in milliseconds.",
     type: "website",
     locale: "en_CA",
-    siteName: "Wenbo Zhao Portfolio",
+    siteName: "Wen Bo Zhao",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     creator: "@Boboscales",
-    title: "Wenbo Zhao | Business Builder & Creative Strategist",
+    title: "Wen Bo Zhao — Builder · Quant-Track Developer",
     description:
-      "I design and build businesses — combining marketing, creative strategy, and full-stack execution.",
+      "I ship businesses — and systems that trade in milliseconds.",
   },
   robots: { index: true, follow: true },
 };
@@ -58,8 +57,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${jetbrains.variable} ${chakra.variable}`}>
-      <body className="font-mono antialiased">{children}</body>
+    <html lang="en" className={`${fraunces.variable} ${plexMono.variable}`}>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

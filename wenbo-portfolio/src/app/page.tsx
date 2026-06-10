@@ -1,37 +1,32 @@
-"use client";
-
-import { IntensityProvider } from "@/lib/intensity-context";
-import { SmoothScrollProvider } from "@/components/providers/smooth-scroll";
-import { CustomCursor } from "@/components/ui/custom-cursor";
-import { BackgroundFX } from "@/components/ui/background-fx";
-import { StatusBar } from "@/components/ui/status-bar";
-import { Navbar } from "@/components/sections/navbar";
+import { CrtOverlay } from "@/components/ui/crt-overlay";
+import { TopBar } from "@/components/sections/top-bar";
 import { Hero } from "@/components/sections/hero";
-import { Services } from "@/components/sections/services";
-import { Work } from "@/components/sections/work";
+import { LiveSystem } from "@/components/sections/live-system";
+import { Projects } from "@/components/sections/projects";
+import { Experience } from "@/components/sections/experience";
 import { About } from "@/components/sections/about";
+import { Skills } from "@/components/sections/skills";
 import { Education } from "@/components/sections/education";
-import { Contact } from "@/components/sections/contact";
-import { Footer } from "@/components/sections/footer";
+import { Contact, Footer } from "@/components/sections/contact";
+import { GengarConsole } from "@/components/sections/gengar-console";
 
 export default function Home() {
   return (
-    <IntensityProvider>
-      <SmoothScrollProvider>
-        <BackgroundFX />
-        <CustomCursor />
-        <Navbar />
-        <main className="relative z-10">
-          <Hero />
-          <Services />
-          <Work />
-          <About />
-          <Education />
-          <Contact />
-        </main>
-        <Footer />
-        <StatusBar />
-      </SmoothScrollProvider>
-    </IntensityProvider>
+    <>
+      <CrtOverlay />
+      <TopBar />
+      <main>
+        <Hero />
+        <LiveSystem />
+        <Projects />
+        <Experience />
+        <About />
+        <Skills />
+        <Education />
+        <Contact />
+        <GengarConsole />
+      </main>
+      <Footer />
+    </>
   );
 }
