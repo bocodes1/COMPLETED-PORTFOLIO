@@ -33,7 +33,7 @@ export const projects: ProjectEntry[] = [
       { label: "status", value: "live · profitable backtest" },
       { label: "edge", value: "confidence-gated 0.50–0.60" },
     ],
-    // TODO: add GitHub link if/when the repo is public (gh unauthenticated — could not verify visibility)
+    // TODO: add GitHub link when the repo goes public (verified private as of 2026-06-10)
     featured: true,
   },
   {
@@ -47,6 +47,7 @@ export const projects: ProjectEntry[] = [
       { label: "status", value: "in development" },
       { label: "scope", value: "8 agents · tiered routing" },
     ],
+    link: { label: "github", url: "https://github.com/bocodes1/borina-mesh" },
   },
   {
     id: "coordlayer",

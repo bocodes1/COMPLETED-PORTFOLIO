@@ -4,11 +4,8 @@ import { projects, type ProjectEntry } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
 
 function ProjectCard({ project }: { project: ProjectEntry }) {
-  return (
-    <MacWindow
-      title={project.windowTitle}
-      className={cn("hover-lift h-full", project.featured && "md:col-span-2")}
-    >
+  const card = (
+    <MacWindow title={project.windowTitle} className="hover-lift h-full">
       <div className="flex h-full flex-col p-6 sm:p-7">
         <h3 className="font-display text-lg leading-snug text-ink sm:text-xl">
           {project.title}
@@ -25,20 +22,27 @@ function ProjectCard({ project }: { project: ProjectEntry }) {
           ))}
         </dl>
         {project.link && (
-          <p className="mt-4 text-[12px]">
-            <a
-              href={project.link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="quiet-link"
-            >
-              {project.link.label} →
-            </a>
-          </p>
+          <p className="quiet-link mt-4 text-[12px]">{project.link.label} →</p>
         )}
       </div>
     </MacWindow>
   );
+
+  // whole card links out when a public repo exists
+  if (project.link) {
+    return (
+      <a
+        href={project.link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block h-full"
+        aria-label={`${project.title} — ${project.link.label}`}
+      >
+        {card}
+      </a>
+    );
+  }
+  return card;
 }
 
 /** §3.4 — personal builds, framed as engineering. */
