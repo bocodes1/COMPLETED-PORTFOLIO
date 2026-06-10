@@ -2,134 +2,126 @@
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState, useCallback } from "react";
-import { navReveal } from "@/lib/motion";
 import { useMagnetic } from "@/hooks/use-magnetic";
-import Link from "next/link";
 
 const navItems = [
-  { label: "Home", href: "#home" },
-  { label: "What I Do", href: "#services" },
-  { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
-  { label: "Education", href: "#education" },
+  { label: "services", href: "#services" },
+  { label: "work", href: "#work" },
+  { label: "about", href: "#about" },
+  { label: "edu", href: "#education" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const { scrollY } = useScroll();
-  const magnetic = useMagnetic(0.15);
+  const magnetic = useMagnetic(0.2);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 50);
-  });
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      e.preventDefault();
-      setMobileOpen(false);
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    },
-    []
-  );
+  const go = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setOpen(false);
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   return (
     <motion.nav
-      variants={navReveal}
-      initial="hidden"
-      animate="visible"
+      initial={{ opacity: 0, y: -16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-black/60 backdrop-blur-2xl border-b border-white/5 shadow-2xl"
-          : "bg-transparent"
+          ? "bg-background/75 backdrop-blur-xl border-b border-border"
+          : "border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16 md:h-20">
-        {/* Logo */}
-        <Link
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-14 md:h-16 flex items-center justify-between">
+        {/* prompt logo */}
+        <a
           href="#home"
-          onClick={(e) => handleClick(e, "#home")}
-          className="text-lg font-semibold tracking-tight text-white hover:text-cyan-400 transition-colors duration-300"
+          onClick={(e) => go(e, "#home")}
+          className="group font-mono text-sm tracking-tight"
         >
-          Wenbo Zhao
-        </Link>
+          <span className="text-accent-2">wenbo</span>
+          <span className="text-fg-faint">@toronto</span>
+          <span className="text-fg-dim">:~$</span>
+          <span className="caret align-middle" />
+        </a>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => (
+        {/* desktop nav */}
+        <ul className="hidden md:flex items-center gap-1 font-mono text-sm">
+          {navItems.map((item, i) => (
             <li key={item.href}>
               <a
                 href={item.href}
-                onClick={(e) => handleClick(e, item.href)}
-                className="px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-300 rounded-lg hover:bg-white/5"
+                onClick={(e) => go(e, item.href)}
+                className="group inline-flex items-center gap-1.5 px-3 py-2 text-fg-dim hover:text-foreground transition-colors"
               >
+                <span className="text-fg-faint group-hover:text-accent transition-colors tabular">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="text-fg-faint group-hover:text-accent transition-colors">/</span>
                 {item.label}
               </a>
             </li>
           ))}
-          <li className="ml-2">
+          <li className="ml-3">
             <a
               href="#contact"
-              onClick={(e) => handleClick(e, "#contact")}
+              onClick={(e) => go(e, "#contact")}
               ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
               onMouseMove={magnetic.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
               onMouseLeave={magnetic.onMouseLeave}
-              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-black bg-white rounded-full hover:bg-cyan-400 hover:text-black transition-all duration-300"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-accent text-background rounded-sm hover:shadow-[0_0_24px_var(--accent-glow)] transition-shadow"
             >
-              Get in Touch
+              <span className="text-background/70">$</span>
+              ./contact
             </a>
           </li>
         </ul>
 
-        {/* Mobile toggle */}
+        {/* mobile toggle */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={() => setOpen(!open)}
           className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-1.5 z-50"
           aria-label="Toggle navigation"
         >
-          <span
-            className={`w-6 h-[1.5px] bg-white transition-all duration-300 ${
-              mobileOpen ? "rotate-45 translate-y-[4.5px]" : ""
-            }`}
-          />
-          <span
-            className={`w-6 h-[1.5px] bg-white transition-all duration-300 ${
-              mobileOpen ? "-rotate-45 -translate-y-[4.5px]" : ""
-            }`}
-          />
+          <span className={`w-6 h-px bg-foreground transition-all duration-300 ${open ? "rotate-45 translate-y-[4px]" : ""}`} />
+          <span className={`w-6 h-px bg-foreground transition-all duration-300 ${open ? "-rotate-45 -translate-y-[4px]" : ""}`} />
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* mobile menu */}
       <motion.div
         initial={false}
-        animate={mobileOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-        className={`md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-2xl border-b border-white/5 ${
-          mobileOpen ? "pointer-events-auto" : "pointer-events-none"
+        animate={open ? { opacity: 1, y: 0 } : { opacity: 0, y: -16 }}
+        className={`md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border ${
+          open ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
-        <ul className="px-6 py-8 flex flex-col gap-2">
-          {navItems.map((item) => (
+        <ul className="px-6 py-6 flex flex-col gap-1 font-mono">
+          {navItems.map((item, i) => (
             <li key={item.href}>
               <a
                 href={item.href}
-                onClick={(e) => handleClick(e, item.href)}
-                className="block py-3 text-lg text-white/70 hover:text-white transition-colors"
+                onClick={(e) => go(e, item.href)}
+                className="flex items-center gap-3 py-3 text-base text-fg-dim hover:text-foreground transition-colors"
               >
+                <span className="text-accent text-sm tabular">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-fg-faint">/</span>
                 {item.label}
               </a>
             </li>
           ))}
-          <li className="pt-4">
+          <li className="pt-3">
             <a
               href="#contact"
-              onClick={(e) => handleClick(e, "#contact")}
-              className="inline-block px-6 py-3 text-sm font-medium text-black bg-white rounded-full hover:bg-cyan-400 transition-all"
+              onClick={(e) => go(e, "#contact")}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-accent text-background rounded-sm"
             >
-              Get in Touch
+              <span className="text-background/70">$</span>
+              ./contact
             </a>
           </li>
         </ul>

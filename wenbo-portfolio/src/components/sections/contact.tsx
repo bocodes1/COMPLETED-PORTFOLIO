@@ -4,59 +4,84 @@ import { motion } from "framer-motion";
 import { SectionReveal, RevealItem } from "@/components/ui/section-reveal";
 import { useMagnetic } from "@/hooks/use-magnetic";
 
+const EMAIL = "wenbozhao.zhao@mail.utoronto.ca";
+
 export function Contact() {
-  const magnetic = useMagnetic(0.15);
+  const magnetic = useMagnetic(0.2);
 
   return (
-    <section id="contact" className="relative py-32 md:py-48">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+    <section id="contact" className="relative py-32 md:py-44">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-px bg-gradient-to-r from-transparent via-border-strong to-transparent" />
 
-      {/* Ambient glow */}
+      {/* ambient glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[120px]" />
+        <div className="w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,var(--accent-glow),transparent_60%)] opacity-[0.18] blur-[110px]" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center relative z-10">
+      <div className="max-w-4xl mx-auto px-6 lg:px-12 relative z-10">
         <SectionReveal>
-          <RevealItem>
-            <p className="text-xs font-medium tracking-[0.3em] uppercase text-cyan-400 mb-6">
-              Connect
-            </p>
-          </RevealItem>
+          {/* terminal window */}
+          <div className="border border-border-strong bg-card/70 backdrop-blur-sm">
+            {/* chrome */}
+            <RevealItem>
+              <div className="flex items-center gap-2 px-4 h-10 border-b border-border font-mono text-xs text-fg-dim">
+                <span className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-accent-2/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-fg-faint" />
+                </span>
+                <span className="ml-2">wenbo@toronto: ~/contact</span>
+              </div>
+            </RevealItem>
 
-          <RevealItem>
-            <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent mb-6">
-              Let&apos;s Build Something
-            </h2>
-          </RevealItem>
+            <div className="px-6 md:px-12 py-12 md:py-16">
+              <RevealItem>
+                <div className="font-mono text-sm text-fg-dim mb-6">
+                  <span className="text-accent-2">$</span> ./contact.sh --init
+                </div>
+              </RevealItem>
 
-          <RevealItem>
-            <p className="text-base md:text-lg text-white/40 max-w-md mx-auto mb-12 font-light">
-              Have a project in mind? Let&apos;s talk about how we can work together.
-            </p>
-          </RevealItem>
+              <RevealItem>
+                <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight text-foreground mb-6 leading-[0.95]">
+                  Let&apos;s build
+                  <br />
+                  something <span className="text-accent glow-accent">real</span>
+                  <span className="caret align-middle" />
+                </h2>
+              </RevealItem>
 
-          <RevealItem>
-            <a
-              href="mailto:wenbozhao.zhao@mail.utoronto.ca"
-              ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
-              onMouseMove={magnetic.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
-              onMouseLeave={magnetic.onMouseLeave}
-              className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-full bg-white text-black text-base font-medium tracking-wide hover:shadow-[0_0_60px_rgba(34,211,238,0.3)] transition-all duration-500 overflow-hidden"
-            >
-              <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-                Get in Touch
-              </span>
-              <motion.span
-                className="relative z-10 group-hover:text-white transition-colors duration-300"
-                animate={{ x: [0, 4, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                →
-              </motion.span>
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </a>
-          </RevealItem>
+              <RevealItem>
+                <p className="text-base text-fg-dim max-w-md mb-10 leading-relaxed">
+                  Have a project in mind? Let&apos;s talk about how we can work together.
+                </p>
+              </RevealItem>
+
+              <RevealItem>
+                <a
+                  href={`mailto:${EMAIL}`}
+                  ref={magnetic.ref as React.RefObject<HTMLAnchorElement>}
+                  onMouseMove={magnetic.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
+                  onMouseLeave={magnetic.onMouseLeave}
+                  className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-background text-base font-medium rounded-sm hover:shadow-[0_0_50px_var(--accent-glow)] transition-shadow duration-500"
+                >
+                  <span className="text-background/70">$</span>
+                  mail --to wenbo
+                  <motion.span
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    →
+                  </motion.span>
+                </a>
+              </RevealItem>
+
+              <RevealItem>
+                <p className="font-mono text-xs text-fg-faint mt-6">
+                  <span className="text-accent-2">{">"}</span> {EMAIL}
+                </p>
+              </RevealItem>
+            </div>
+          </div>
         </SectionReveal>
       </div>
     </section>

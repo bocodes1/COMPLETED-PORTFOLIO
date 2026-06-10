@@ -4,64 +4,46 @@ import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from
 import { useState, useRef, useCallback } from "react";
 import { projects, type Project } from "@/lib/project-data";
 import { SectionReveal, RevealItem } from "@/components/ui/section-reveal";
+import { Prompt } from "@/components/ui/terminal";
 import { useIntensity } from "@/lib/intensity-context";
-import { X, ArrowRight } from "lucide-react";
+import { X } from "lucide-react";
 
-function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
+function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { isOverdrive } = useIntensity();
 
-  // Tilt effect
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springConfig = { damping: 20, stiffness: 200 };
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]), springConfig);
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-8, 8]), springConfig);
+  const spring = { damping: 20, stiffness: 200 };
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), spring);
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), spring);
 
-  // Light sweep position
-  const lightX = useMotionValue(50);
-  const lightY = useMotionValue(50);
-
-  const handleMouseMove = useCallback(
+  const onMove = useCallback(
     (e: React.MouseEvent) => {
       if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      const xPos = (e.clientX - rect.left) / rect.width - 0.5;
-      const yPos = (e.clientY - rect.top) / rect.height - 0.5;
-      x.set(xPos);
-      y.set(yPos);
-      lightX.set((e.clientX - rect.left) / rect.width * 100);
-      lightY.set((e.clientY - rect.top) / rect.height * 100);
+      const r = cardRef.current.getBoundingClientRect();
+      x.set((e.clientX - r.left) / r.width - 0.5);
+      y.set((e.clientY - r.top) / r.height - 0.5);
     },
-    [x, y, lightX, lightY]
+    [x, y]
   );
-
-  const handleMouseLeave = useCallback(() => {
+  const onLeave = useCallback(() => {
     x.set(0);
     y.set(0);
-    lightX.set(50);
-    lightY.set(50);
-    // Pause video on card leave
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  }, [x, y, lightX, lightY]);
-
-  const handleMouseEnter = useCallback(() => {
-    // Play video on card hover
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
-    }
+    videoRef.current?.pause();
+  }, [x, y]);
+  const onEnter = useCallback(() => {
+    videoRef.current?.play().catch(() => {});
   }, []);
 
   return (
     <RevealItem>
       <motion.article
         ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        onMouseEnter={handleMouseEnter}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        onMouseEnter={onEnter}
         onClick={onOpen}
         role="button"
         tabIndex={0}
@@ -74,93 +56,84 @@ function ProjectCard({ project, index, onOpen }: { project: Project; index: numb
         style={{
           rotateX: isOverdrive ? rotateX : 0,
           rotateY: isOverdrive ? rotateY : 0,
-          transformPerspective: 800,
+          transformPerspective: 900,
         }}
-        whileHover={{ y: -6 }}
+        whileHover={{ y: -4 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="group relative rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden cursor-pointer hover:border-white/15 transition-colors duration-500"
-        aria-label={`View ${project.shortTitle} case study`}
+        className="group relative border border-border bg-card overflow-hidden cursor-pointer hover:border-accent/50 transition-colors duration-500"
+        aria-label={`Open ${project.shortTitle} case file`}
       >
-        {/* Card image / video thumbnail area */}
-        <div className="relative h-56 md:h-64 overflow-hidden">
-          {/* Gradient fallback — only visible for cards without video */}
-          <div
-            className={`absolute inset-0 bg-gradient-to-br ${project.gradient}`}
-          />
+        {/* window chrome bar */}
+        <div className="flex items-center justify-between px-4 h-9 border-b border-border bg-background/60 font-mono text-[11px]">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-fg-faint group-hover:bg-accent transition-colors" />
+            <span className="text-fg-dim">
+              ~/work/<span className="text-foreground">{project.number}_{project.id}</span>.proj
+            </span>
+          </span>
+          <span className="text-fg-faint group-hover:text-accent transition-colors tabular">
+            {project.hasVideo ? "● rec" : "[ • ]"}
+          </span>
+        </div>
 
-          {/* Project number — shown only when no video */}
+        {/* media */}
+        <div className="relative h-52 md:h-60 overflow-hidden">
+          <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-60`} />
           {!project.hasVideo && (
-            <span className="absolute top-5 left-6 text-6xl font-bold text-white/[0.06] tracking-tighter">
+            <span className="absolute inset-0 flex items-center justify-center font-display font-bold text-[7rem] text-foreground/[0.06] tracking-tighter">
               {project.number}
             </span>
           )}
-
-          {/* Video thumbnail — always visible showing first frame, plays on card hover */}
           {project.hasVideo && project.videoFile && (
             <video
               ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-700"
               src={`${project.mediaPath}/${project.videoFile}`}
               muted
               loop
               playsInline
-              preload="auto"
+              preload="metadata"
             />
           )}
-
-          {/* Subtle dark overlay for text readability — lightens on hover */}
-          {project.hasVideo && (
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-all duration-500 pointer-events-none" />
-          )}
-
-          {/* Light sweep effect */}
-          <motion.div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-            style={{
-              background: `radial-gradient(500px circle at ${lightX.get()}% ${lightY.get()}%, rgba(255,255,255,0.06), transparent 60%)`,
-            }}
-          />
-
-          {/* Edge glow */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none border border-cyan-500/20 rounded-t-2xl" />
+          <div className="absolute inset-0 bg-black/25 group-hover:bg-black/5 transition-colors duration-500 pointer-events-none" />
+          {/* scanline tint */}
+          <div className="absolute inset-0 scanlines opacity-40 pointer-events-none" />
+          {/* edge glow */}
+          <div className="absolute inset-x-0 top-0 h-px bg-accent/0 group-hover:bg-accent/70 group-hover:shadow-[0_0_12px_var(--accent-glow)] transition-all duration-500" />
         </div>
 
-        {/* Content */}
-        <div className="p-6 md:p-8">
-          <span className="text-xs font-medium tracking-wider uppercase text-cyan-400/70 mb-2 block">
+        {/* content */}
+        <div className="p-5 md:p-6">
+          <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-accent-2 mb-2 block">
             {project.category}
           </span>
-          <h3 className="text-xl font-semibold text-white mb-3 tracking-tight group-hover:text-cyan-300 transition-colors duration-300">
+          <h3 className="font-mono text-lg text-foreground mb-3 tracking-tight group-hover:text-accent transition-colors duration-300">
             {project.shortTitle}
           </h3>
-          <p className="text-sm text-white/40 leading-relaxed mb-5 line-clamp-2">
+          <p className="text-sm text-fg-dim leading-relaxed mb-5 line-clamp-2">
             {project.overview}
           </p>
 
-          {/* Tech tags */}
-          <div className="flex flex-wrap gap-2 mb-5">
+          <div className="flex flex-wrap gap-1.5 mb-5">
             {project.tools.slice(0, 4).map((tool) => (
               <span
                 key={tool}
-                className="px-2.5 py-1 text-[10px] font-medium tracking-wider uppercase rounded-full border border-white/8 text-white/35 bg-white/[0.02]"
+                className="font-mono text-[10px] px-2 py-1 border border-border text-fg-dim bg-background"
               >
                 {tool}
               </span>
             ))}
             {project.tools.length > 4 && (
-              <span className="px-2.5 py-1 text-[10px] font-medium tracking-wider uppercase rounded-full border border-white/8 text-white/25">
+              <span className="font-mono text-[10px] px-2 py-1 border border-border text-fg-faint">
                 +{project.tools.length - 4}
               </span>
             )}
           </div>
 
-          {/* CTA */}
-          <div className="flex items-center gap-2 text-sm text-white/50 group-hover:text-cyan-400 transition-colors duration-300">
-            <span>View Case Study</span>
-            <ArrowRight
-              size={14}
-              className="transform group-hover:translate-x-1 transition-transform duration-300"
-            />
+          <div className="flex items-center gap-2 font-mono text-sm text-fg-dim group-hover:text-accent transition-colors duration-300">
+            <span className="text-accent">$</span>
+            <span>cat case_study.md</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">_</span>
           </div>
         </div>
       </motion.article>
@@ -178,71 +151,69 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
       className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto"
       onClick={onClose}
     >
-      {/* Overlay */}
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-xl" />
+      <div className="fixed inset-0 bg-black/85 backdrop-blur-md" />
 
-      {/* Modal */}
       <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        initial={{ opacity: 0, y: 30, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 20, scale: 0.98 }}
+        exit={{ opacity: 0, y: 16, scale: 0.99 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className="relative z-10 w-full max-w-3xl mx-4 my-16 md:my-24 rounded-3xl border border-white/10 bg-[#0a0a0b] overflow-hidden shadow-2xl"
+        className="relative z-10 w-full max-w-3xl mx-4 my-16 md:my-24 border border-border-strong bg-card shadow-[0_0_60px_-12px_var(--accent-glow)]"
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all"
-          aria-label="Close modal"
-        >
-          <X size={18} />
-        </button>
-
-        {/* Header gradient */}
-        <div className={`h-32 bg-gradient-to-br ${project.gradient} relative`}>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0b] to-transparent" />
+        {/* window chrome */}
+        <div className="sticky top-0 z-20 flex items-center justify-between px-4 h-10 border-b border-border bg-background/90 backdrop-blur font-mono text-xs">
+          <div className="flex items-center gap-2 text-fg-dim">
+            <span className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-accent" />
+              <span className="w-2.5 h-2.5 rounded-full bg-accent-2/60" />
+              <span className="w-2.5 h-2.5 rounded-full bg-fg-faint" />
+            </span>
+            <span className="ml-2 hidden sm:inline">
+              ~/work/{project.number}_{project.id} — <span className="text-foreground">cat README.md</span>
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center text-fg-dim hover:text-accent transition-colors"
+            aria-label="Close"
+          >
+            <X size={16} />
+          </button>
         </div>
 
-        <div className="px-8 pb-10 -mt-8 relative">
-          <span className="text-xs font-medium tracking-[0.2em] uppercase text-cyan-400/70 mb-2 block">
+        <div className="px-6 md:px-9 py-8">
+          {/* banner */}
+          <div className={`h-24 -mx-6 md:-mx-9 -mt-8 mb-7 bg-gradient-to-br ${project.gradient} relative`}>
+            <div className="absolute inset-0 scanlines opacity-50" />
+            <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+          </div>
+
+          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-accent-2 mb-2 block">
             {project.category}
           </span>
-          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-3">
+          <h2 className="font-display font-bold text-2xl md:text-3xl text-foreground tracking-tight mb-3">
             {project.title}
           </h2>
-          <p className="text-sm text-white/50 leading-relaxed mb-8">
+          <p className="text-sm text-fg-dim leading-relaxed mb-8 pl-3 border-l border-border">
             {project.overview}
           </p>
 
-          {/* Timeline */}
-          {project.timeline && (
-            <div className="mb-6">
-              <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/30 mb-2">
-                Timeline
-              </h3>
-              <p className="text-sm text-white/60">{project.timeline}</p>
-            </div>
-          )}
-
-          {/* Role */}
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/30 mb-2">
-              My Role
-            </h3>
-            <p className="text-sm text-white/60">{project.role}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            {project.timeline && (
+              <Field label="timeline" value={project.timeline} />
+            )}
+            <Field label="role" value={project.role} />
           </div>
 
-          {/* Tools */}
+          {/* tools */}
           <div className="mb-8">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/30 mb-3">
-              Tools & Skills
-            </h3>
-            <div className="flex flex-wrap gap-2">
+            <FieldLabel>stack</FieldLabel>
+            <div className="flex flex-wrap gap-1.5">
               {project.tools.map((tool) => (
                 <span
                   key={tool}
-                  className="px-3 py-1.5 text-xs font-medium rounded-full border border-white/10 text-white/50 bg-white/[0.03]"
+                  className="font-mono text-[11px] px-2.5 py-1 border border-border text-fg-dim bg-background"
                 >
                   {tool}
                 </span>
@@ -250,43 +221,34 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8" />
+          <div className="h-px bg-gradient-to-r from-transparent via-border-strong to-transparent mb-8" />
 
-          {/* Problem */}
+          {/* problem */}
           <div className="mb-8">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/30 mb-3">
-              The Problem
-            </h3>
-            <p className="text-sm text-white/50 leading-relaxed">
-              {project.problem}
-            </p>
+            <FieldLabel>// problem</FieldLabel>
+            <p className="text-sm text-fg-dim leading-relaxed">{project.problem}</p>
           </div>
 
-          {/* Solution */}
+          {/* solution */}
           <div className="mb-8">
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/30 mb-3">
-              The Solution
-            </h3>
+            <FieldLabel>// solution</FieldLabel>
             <ul className="space-y-2.5">
               {project.solution.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-white/50 leading-relaxed">
-                  <span className="w-1 h-1 rounded-full bg-cyan-400/60 mt-2 shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-sm text-fg-dim leading-relaxed">
+                  <span className="text-accent font-mono mt-px shrink-0">{">"}</span>
                   {item}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Outcomes */}
+          {/* outcomes */}
           <div>
-            <h3 className="text-xs font-semibold tracking-[0.2em] uppercase text-white/30 mb-3">
-              Outcomes
-            </h3>
+            <FieldLabel>// outcomes</FieldLabel>
             <ul className="space-y-2.5">
               {project.outcomes.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-white/50 leading-relaxed">
-                  <span className="w-1 h-1 rounded-full bg-emerald-400/60 mt-2 shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-sm text-fg-dim leading-relaxed">
+                  <span className="text-accent-2 font-mono mt-px shrink-0">+</span>
                   {item}
                 </li>
               ))}
@@ -298,56 +260,63 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
   );
 }
 
-export function Work() {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="font-mono text-[11px] font-semibold tracking-[0.2em] uppercase text-accent/80 mb-3">
+      {children}
+    </h3>
+  );
+}
 
-  // Lock body scroll when modal is open
-  const openModal = (project: Project) => {
-    setSelectedProject(project);
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <FieldLabel>{label}</FieldLabel>
+      <p className="text-sm text-fg-dim">{value}</p>
+    </div>
+  );
+}
+
+export function Work() {
+  const [selected, setSelected] = useState<Project | null>(null);
+
+  const open = (p: Project) => {
+    setSelected(p);
     document.body.style.overflow = "hidden";
   };
-
-  const closeModal = () => {
-    setSelectedProject(null);
+  const close = () => {
+    setSelected(null);
     document.body.style.overflow = "";
   };
 
   return (
-    <section id="work" className="relative py-32 md:py-40">
+    <section id="work" className="relative py-28 md:py-36">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <SectionReveal>
           <RevealItem>
-            <div className="text-center mb-20">
-              <p className="text-xs font-medium tracking-[0.3em] uppercase text-cyan-400 mb-4">
-                Portfolio
-              </p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent">
-                Featured Work
-              </h2>
-              <p className="mt-4 text-base text-white/40 max-w-md mx-auto">
-                Selected projects showcasing strategy and execution
-              </p>
+            <div className="mb-14 flex flex-col gap-4">
+              <Prompt path="~/work" command="ls --case-studies" />
+              <div className="flex items-end justify-between gap-6 border-b border-border pb-5">
+                <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight text-foreground">
+                  Featured Work
+                </h2>
+                <span className="hidden sm:block font-mono text-xs text-fg-faint tabular">
+                  {String(projects.length).padStart(2, "0")} files
+                </span>
+              </div>
             </div>
           </RevealItem>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {projects.map((project, i) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={i}
-                onOpen={() => openModal(project)}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} onOpen={() => open(project)} />
             ))}
           </div>
         </SectionReveal>
       </div>
 
-      {/* Modal */}
       <AnimatePresence>
-        {selectedProject && (
-          <ProjectModal project={selectedProject} onClose={closeModal} />
-        )}
+        {selected && <ProjectModal project={selected} onClose={close} />}
       </AnimatePresence>
     </section>
   );

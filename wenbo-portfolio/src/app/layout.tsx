@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { JetBrains_Mono, Chakra_Petch } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-sans",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const chakra = Chakra_Petch({
+  variable: "--font-chakra",
+  weight: ["500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
 });
@@ -51,10 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-      </body>
+    <html lang="en" className={`dark ${jetbrains.variable} ${chakra.variable}`}>
+      <body className="font-mono antialiased">{children}</body>
     </html>
   );
 }

@@ -75,22 +75,21 @@ export function CustomCursor() {
   if (hidden) return null;
 
   return (
-    <>
+    <motion.div
+      ref={dotRef}
+      className="fixed top-0 left-0 z-[9999] pointer-events-none mix-blend-difference"
+      style={{ x: smoothX, y: smoothY }}
+    >
+      {/* terminal block cursor */}
       <motion.div
-        ref={dotRef}
-        className="fixed top-0 left-0 z-[9999] pointer-events-none mix-blend-difference"
-        style={{ x: smoothX, y: smoothY }}
-      >
-        <motion.div
-          className="relative -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
-          animate={{
-            width: hovered ? 48 : clicking ? 8 : 12,
-            height: hovered ? 48 : clicking ? 8 : 12,
-            opacity: hovered ? 0.4 : 0.8,
-          }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-        />
-      </motion.div>
-    </>
+        className="relative -translate-x-1/2 -translate-y-1/2 bg-white"
+        animate={{
+          width: hovered ? 26 : clicking ? 6 : 9,
+          height: hovered ? 26 : clicking ? 14 : 18,
+          opacity: hovered ? 0.55 : 0.85,
+        }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+      />
+    </motion.div>
   );
 }

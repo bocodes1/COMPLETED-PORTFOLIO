@@ -2,22 +2,29 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { heroTitle, heroSubtitle, duration, easing } from "@/lib/motion";
 import { useIntensity } from "@/lib/intensity-context";
 import { useMagnetic } from "@/hooks/use-magnetic";
-import dynamic from "next/dynamic";
-
-const HeroScene = dynamic(
-  () => import("@/components/three/hero-scene").then((m) => m.HeroScene),
-  { ssr: false }
-);
+import { useTypewriter } from "@/components/ui/terminal";
+import { DigitalRain } from "@/components/ui/digital-rain";
 
 const roles = [
-  "Business Builder",
-  "Creative Strategist",
-  "Growth Engineer",
-  "Front-End Developer",
+  "business_builder",
+  "creative_strategist",
+  "growth_engineer",
+  "frontend_developer",
 ];
+
+const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
+const lineV = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.55, ease: EASE, delay: 0.1 + i * 0.14 },
+  }),
+};
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,180 +32,189 @@ export function Hero() {
     target: sectionRef,
     offset: ["start start", "end start"],
   });
+  const y = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.6], [1, 0.92]);
+  const { isOverdrive } = useIntensity();
+  const { out: cmd, done } = useTypewriter("whoami", true, 65);
 
   const [roleIndex, setRoleIndex] = useState(0);
-  const { isOverdrive } = useIntensity();
-  const btnMagnetic = useMagnetic(0.2);
-  const btnMagnetic2 = useMagnetic(0.2);
-
-  // Mouse parallax for the name
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const btn1 = useMagnetic(0.25);
+  const btn2 = useMagnetic(0.25);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 2800);
-    return () => clearInterval(interval);
+    const id = setInterval(() => setRoleIndex((p) => (p + 1) % roles.length), 2400);
+    return () => clearInterval(id);
   }, []);
 
   useEffect(() => {
-    const handleMouse = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      setMousePos({ x, y });
+    const h = (e: MouseEvent) => {
+      setMouse({
+        x: (e.clientX / window.innerWidth - 0.5) * 2,
+        y: (e.clientY / window.innerHeight - 0.5) * 2,
+      });
     };
-    window.addEventListener("mousemove", handleMouse);
-    return () => window.removeEventListener("mousemove", handleMouse);
+    window.addEventListener("mousemove", h);
+    return () => window.removeEventListener("mousemove", h);
   }, []);
 
-  const parallaxStrength = isOverdrive ? 20 : 10;
+  const par = isOverdrive ? 16 : 8;
 
   return (
     <section
       ref={sectionRef}
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center overflow-hidden"
     >
-      {/* 3D Background */}
-      <HeroScene />
-
-      {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black z-[1]" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-[1]" />
-
-      {/* Noise texture */}
-      <div
-        className="absolute inset-0 z-[2] opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundSize: "128px",
-        }}
-      />
+      {/* Digital rain — faint texture only */}
+      <div className="absolute inset-0 z-0 opacity-[0.35]">
+        <DigitalRain />
+      </div>
+      {/* Overlays to keep text legible */}
+      <div className="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_30%_45%,rgba(8,8,11,0.5),rgba(8,8,11,0.9))]" />
+      <div className="absolute inset-x-0 bottom-0 h-40 z-[1] bg-gradient-to-t from-background to-transparent" />
 
       {/* Content */}
       <motion.div
-        style={{ y, opacity, scale }}
-        className="relative z-10 text-center px-6 max-w-5xl mx-auto"
+        style={{ y, opacity }}
+        className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-12 pt-24"
       >
-        {/* Location badge */}
+        {/* status line */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: duration.normal, ease: easing.snappy, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8"
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex items-center gap-3 mb-8 text-[11px] sm:text-xs tracking-[0.2em] uppercase text-fg-dim"
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-medium tracking-wider uppercase text-white/60">
-            Toronto, Canada
-          </span>
+          <span className="w-2 h-2 bg-accent-2 pulse-dot shadow-[0_0_12px_var(--accent-2-glow)]" />
+          <span>conn established</span>
+          <span className="text-fg-faint">//</span>
+          <span>toronto, ca</span>
+          <span className="text-fg-faint">//</span>
+          <span className="text-accent-2">45.4°N</span>
         </motion.div>
 
-        {/* Main headline with mouse parallax */}
-        <motion.h1
-          variants={heroTitle}
-          initial="hidden"
-          animate="visible"
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tighter leading-[0.9] mb-6"
-          style={{
-            transform: `translate(${mousePos.x * parallaxStrength}px, ${mousePos.y * parallaxStrength * 0.5}px)`,
-            transition: "transform 0.15s ease-out",
-          }}
-        >
-          <span className="block bg-gradient-to-b from-white via-white to-white/40 bg-clip-text text-transparent">
-            Building Businesses
-          </span>
-          <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
-            That Actually Work
-          </span>
-        </motion.h1>
+        {/* prompt */}
+        <div className="font-mono text-sm sm:text-base mb-5">
+          <span className="text-accent-2">wenbo</span>
+          <span className="text-fg-faint">@toronto</span>
+          <span className="text-fg-dim">:~$ </span>
+          <span className="text-foreground">{cmd}</span>
+          {!done && <span className="caret" />}
+        </div>
 
-        {/* Role text transition */}
-        <motion.div
-          variants={heroSubtitle}
-          initial="hidden"
-          animate="visible"
-          className="h-8 mb-6 overflow-hidden"
-        >
+        {/* The big reveal */}
+        <motion.div initial="hidden" animate={done ? "visible" : "hidden"}>
+          {/* Giant name */}
+          <motion.h1
+            custom={0}
+            variants={lineV}
+            className="font-display font-bold leading-[0.82] tracking-tight mb-6 select-none"
+            style={{
+              transform: `translate(${mouse.x * par}px, ${mouse.y * par * 0.5}px)`,
+              transition: "transform 0.18s ease-out",
+            }}
+          >
+            <span
+              className="glitch glow-accent block text-[clamp(3rem,13vw,11rem)] text-foreground"
+              data-text="WENBO"
+            >
+              WENBO
+            </span>
+            <span
+              className="glitch block text-[clamp(3rem,13vw,11rem)] text-foreground/90 -mt-[0.08em]"
+              data-text="ZHAO"
+            >
+              ZHAO
+            </span>
+          </motion.h1>
+
+          {/* role */}
+          <motion.div
+            custom={1}
+            variants={lineV}
+            className="font-mono text-base sm:text-lg mb-6 flex items-center gap-2 flex-wrap"
+          >
+            <span className="text-fg-faint">{">"}</span>
+            <span className="text-fg-dim">role:</span>
+            <span className="relative inline-block min-w-[16ch]">
+              <motion.span
+                key={roleIndex}
+                initial={{ y: 16, opacity: 0, filter: "blur(6px)" }}
+                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="text-accent glow-accent inline-block"
+              >
+                {roles[roleIndex]}
+              </motion.span>
+            </span>
+          </motion.div>
+
+          {/* mission */}
+          <motion.div custom={2} variants={lineV} className="font-mono text-sm sm:text-base mb-2">
+            <span className="text-accent-2">wenbo</span>
+            <span className="text-fg-faint">@toronto</span>
+            <span className="text-fg-dim">:~$ </span>
+            <span className="text-foreground">cat mission.txt</span>
+          </motion.div>
           <motion.p
-            key={roleIndex}
-            initial={{ y: 30, opacity: 0, filter: "blur(8px)" }}
-            animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: -30, opacity: 0, filter: "blur(8px)" }}
-            transition={{ duration: duration.normal, ease: easing.snappy }}
-            className="text-lg md:text-xl font-light tracking-wide text-white/50"
+            custom={3}
+            variants={lineV}
+            className="text-fg-dim text-sm sm:text-base leading-relaxed max-w-xl mb-10 pl-4 border-l border-border"
           >
-            {roles[roleIndex]}
+            I design and build businesses — combining marketing, creative
+            strategy, and full-stack execution.
           </motion.p>
-        </motion.div>
 
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: duration.slow, ease: easing.snappy, delay: 0.5 }}
-          className="text-base md:text-lg text-white/40 max-w-xl mx-auto mb-10 font-light leading-relaxed"
-        >
-          I design and build businesses — combining marketing, creative strategy,
-          and full-stack execution.
-        </motion.p>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: duration.slow, ease: easing.snappy, delay: 0.7 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <a
-            href="#work"
-            ref={btnMagnetic.ref as React.RefObject<HTMLAnchorElement>}
-            onMouseMove={btnMagnetic.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
-            onMouseLeave={btnMagnetic.onMouseLeave}
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#work")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="group relative px-8 py-3.5 rounded-full bg-white text-black text-sm font-medium tracking-wide overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(34,211,238,0.3)]"
-          >
-            <span className="relative z-10">View Work</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative z-10 group-hover:text-white transition-colors duration-300" />
-          </a>
-
-          <a
-            href="#contact"
-            ref={btnMagnetic2.ref as React.RefObject<HTMLAnchorElement>}
-            onMouseMove={btnMagnetic2.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
-            onMouseLeave={btnMagnetic2.onMouseLeave}
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="px-8 py-3.5 rounded-full border border-white/15 text-white/70 text-sm font-medium tracking-wide hover:border-white/30 hover:text-white hover:bg-white/5 transition-all duration-300"
-          >
-            Contact
-          </a>
+          {/* CTAs */}
+          <motion.div custom={4} variants={lineV} className="flex flex-col sm:flex-row gap-4">
+            <a
+              href="#work"
+              ref={btn1.ref as React.RefObject<HTMLAnchorElement>}
+              onMouseMove={btn1.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
+              onMouseLeave={btn1.onMouseLeave}
+              onClick={(e) => {
+                e.preventDefault();
+                document.querySelector("#work")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-medium bg-accent text-background rounded-sm hover:shadow-[0_0_32px_var(--accent-glow)] transition-shadow"
+            >
+              <span className="text-background/70">$</span>
+              ./view_work
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity">_</span>
+            </a>
+            <a
+              href="#contact"
+              ref={btn2.ref as React.RefObject<HTMLAnchorElement>}
+              onMouseMove={btn2.onMouseMove as unknown as React.MouseEventHandler<HTMLAnchorElement>}
+              onMouseLeave={btn2.onMouseLeave}
+              onClick={(e) => {
+                e.preventDefault();
+                document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-medium border border-border-strong text-fg-dim rounded-sm hover:border-accent hover:text-foreground transition-colors"
+            >
+              <span className="text-accent">$</span>
+              ./contact
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity text-accent">_</span>
+            </a>
+          </motion.div>
         </motion.div>
       </motion.div>
 
-      {/* Scroll indicator */}
+      {/* scroll cue */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
+        transition={{ delay: 1.6, duration: 1 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-[10px] tracking-[0.3em] uppercase text-white/30 font-medium">
-          Scroll
-        </span>
+        <span className="text-[10px] tracking-[0.35em] uppercase text-fg-faint">scroll</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-[1px] h-8 bg-gradient-to-b from-white/30 to-transparent"
+          className="w-px h-8 bg-gradient-to-b from-accent to-transparent"
         />
       </motion.div>
     </section>

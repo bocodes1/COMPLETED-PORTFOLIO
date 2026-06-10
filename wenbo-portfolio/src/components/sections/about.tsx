@@ -2,43 +2,46 @@
 
 import { motion } from "framer-motion";
 import { SectionReveal, RevealItem } from "@/components/ui/section-reveal";
+import { Prompt } from "@/components/ui/terminal";
 import { skills } from "@/lib/project-data";
 import Image from "next/image";
 import { useMagnetic } from "@/hooks/use-magnetic";
 
+const groupKeys = Object.keys(skills) as (keyof typeof skills)[];
+
 export function About() {
-  const magnetic = useMagnetic(0.2);
+  const magnetic = useMagnetic(0.25);
 
   return (
-    <section id="about" className="relative py-32 md:py-40">
-      {/* Subtle gradient divider */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+    <section id="about" className="relative py-28 md:py-36">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-px bg-gradient-to-r from-transparent via-border-strong to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <SectionReveal>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
-            {/* Left: About content */}
-            <div>
+          <RevealItem>
+            <div className="mb-14">
+              <Prompt path="~/about" command="cat about.md" />
+            </div>
+          </RevealItem>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+            {/* bio */}
+            <div className="lg:col-span-7">
               <RevealItem>
-                <p className="text-xs font-medium tracking-[0.3em] uppercase text-cyan-400 mb-4">
-                  About
-                </p>
-              </RevealItem>
-              <RevealItem>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-white to-white/50 bg-clip-text text-transparent mb-8">
-                  About
+                <h2 className="font-display font-bold text-4xl md:text-5xl tracking-tight text-foreground mb-8">
+                  Strategy <span className="text-accent glow-accent">×</span> Execution
                 </h2>
               </RevealItem>
               <RevealItem>
-                <p className="text-base text-white/45 leading-relaxed mb-6">
-                  I&apos;m a business builder based in Toronto who bridges the gap between
-                  strategy and execution. Rather than just advising, I get my hands
-                  dirty — building the systems, creating the assets, and implementing
-                  the infrastructure that makes businesses work.
+                <p className="text-base text-fg-dim leading-relaxed mb-6 pl-4 border-l border-border">
+                  I&apos;m a business builder based in Toronto who bridges the gap
+                  between strategy and execution. Rather than just advising, I get
+                  my hands dirty — building the systems, creating the assets, and
+                  implementing the infrastructure that makes businesses work.
                 </p>
               </RevealItem>
               <RevealItem>
-                <p className="text-base text-white/45 leading-relaxed mb-10">
+                <p className="text-base text-fg-dim leading-relaxed mb-10 pl-4 border-l border-border">
                   My focus is on business building, marketing strategy, creative
                   direction, and front-end execution. I believe in moving fast,
                   testing relentlessly, and building things that actually generate
@@ -55,54 +58,57 @@ export function About() {
                     e.preventDefault();
                     document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="group inline-flex items-center gap-3 px-7 py-3 rounded-full bg-white text-black text-sm font-medium tracking-wide hover:shadow-[0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 overflow-hidden relative"
+                  className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-medium bg-accent text-background rounded-sm hover:shadow-[0_0_32px_var(--accent-glow)] transition-shadow"
                 >
-                  <span className="relative z-10">Let&apos;s Work Together</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 group-hover:text-white transition-colors duration-300" />
+                  <span className="text-background/70">$</span>
+                  ./lets_work
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity">_</span>
                 </a>
               </RevealItem>
             </div>
 
-            {/* Right: Skills */}
-            <div>
+            {/* skills tree */}
+            <div className="lg:col-span-5">
               <RevealItem>
-                <h3 className="text-xs font-semibold tracking-[0.3em] uppercase text-white/30 mb-8">
-                  Skills
-                </h3>
+                <div className="font-mono text-xs text-fg-faint mb-5 flex items-center gap-2">
+                  <span className="text-accent-2">$</span> tree ~/skills
+                </div>
               </RevealItem>
 
-              <div className="space-y-8">
-                {Object.entries(skills).map(([group, items]) => (
-                  <RevealItem key={group}>
-                    <div>
-                      <h4 className="text-sm font-medium text-white/50 mb-4 tracking-wide">
-                        {group}
-                      </h4>
-                      <div className="flex flex-wrap gap-2.5">
-                        {items.map((skill) => (
-                          <motion.span
-                            key={skill.name}
-                            whileHover={{ y: -2, scale: 1.03 }}
-                            className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.05] transition-all duration-300 cursor-default"
-                          >
-                            <Image
-                              src={skill.icon}
-                              alt=""
-                              width={16}
-                              height={16}
-                              className="opacity-50"
-                              aria-hidden="true"
-                            />
-                            <span className="text-xs font-medium text-white/50">
-                              {skill.name}
-                            </span>
-                          </motion.span>
-                        ))}
+              <div className="space-y-6">
+                {groupKeys.map((group, gi) => {
+                  const items = skills[group];
+                  const last = gi === groupKeys.length - 1;
+                  return (
+                    <RevealItem key={group}>
+                      <div>
+                        <h3 className="font-mono text-sm text-foreground mb-3 flex items-center gap-2">
+                          <span className="text-fg-faint">{last ? "└─" : "├─"}</span>
+                          <span className="text-accent-2">{group.toLowerCase().replace(/[\s&/]+/g, "_")}/</span>
+                        </h3>
+                        <div className="flex flex-wrap gap-2 pl-6">
+                          {items.map((skill) => (
+                            <motion.span
+                              key={skill.name}
+                              whileHover={{ y: -2 }}
+                              className="inline-flex items-center gap-2 px-3 py-2 border border-border bg-background hover:border-accent/50 transition-colors duration-300 cursor-default"
+                            >
+                              <Image
+                                src={skill.icon}
+                                alt=""
+                                width={14}
+                                height={14}
+                                className="opacity-60"
+                                aria-hidden="true"
+                              />
+                              <span className="font-mono text-[11px] text-fg-dim">{skill.name}</span>
+                            </motion.span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </RevealItem>
-                ))}
+                    </RevealItem>
+                  );
+                })}
               </div>
             </div>
           </div>
