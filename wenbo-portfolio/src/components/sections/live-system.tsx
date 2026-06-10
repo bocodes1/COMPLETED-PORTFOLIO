@@ -55,7 +55,10 @@ export function LiveSystem() {
             {/* telemetry grid */}
             <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-[4px] border border-line bg-line sm:grid-cols-4">
               {telemetry.map((t) => (
-                <div key={t.label} className="bg-panel px-4 py-4">
+                <div
+                  key={t.label}
+                  className="bg-panel px-4 py-4 transition-colors duration-200 hover:bg-titlebar"
+                >
                   <dt className="meta-label">{t.label}</dt>
                   <dd className="tabular mt-2 text-lg text-ink">{t.value}</dd>
                 </div>

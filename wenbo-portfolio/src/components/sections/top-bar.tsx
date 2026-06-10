@@ -19,7 +19,7 @@ export function TopBar() {
             <a
               key={item.href}
               href={item.href}
-              className="text-[12px] text-ink-mid transition-colors hover:text-ink"
+              className="inline-block text-[12px] text-ink-mid transition-all duration-200 hover:-translate-y-px hover:text-ink"
             >
               {item.label}
             </a>

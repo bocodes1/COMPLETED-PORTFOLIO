@@ -160,6 +160,20 @@
   border-radius: var(--radius-window);
   box-shadow: var(--shadow-window);
   overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* reactive lift for interactive cards — like a Mac window taking focus */
+.hover-lift:hover {
+  transform: translateY(-3px);
+  border-color: var(--ink-dim);
+  box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.65);
+}
+.hover-lift:hover .mac-dot {
+  border-color: var(--ink-mid);
+}
+.hover-lift:hover .mac-title {
+  color: var(--ink);
 }
 .mac-titlebar {
   display: flex;
@@ -177,6 +191,7 @@
   border-radius: 50%;
   border: 1px solid var(--ink-dim);
   background: transparent;
+  transition: border-color 0.25s ease;
 }
 .mac-dot:nth-child(2) { background: var(--line); }
 .mac-dot:nth-child(3) { background: var(--ink-dim); opacity: 0.5; }
@@ -187,6 +202,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.25s ease;
 }
 
 /* ─── The one blinking cursor (hero) + console caret ─── */
@@ -243,13 +259,15 @@
 
 /* ─── Quiet text link ─── */
 .quiet-link {
+  display: inline-block;
   color: var(--ink-mid);
   text-decoration: underline;
   text-decoration-color: var(--line);
   text-underline-offset: 4px;
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease, transform 0.2s ease;
 }
 .quiet-link:hover {
   color: var(--ink);
   text-decoration-color: var(--ink-mid);
+  transform: translateY(-1px);
 }

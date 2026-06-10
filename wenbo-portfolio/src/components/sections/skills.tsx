@@ -19,7 +19,7 @@ export function Skills() {
                 {g.items.map((item) => (
                   <li
                     key={item}
-                    className="rounded-[3px] border border-line bg-panel px-2.5 py-1 text-[11.5px] text-ink-mid"
+                    className="rounded-[3px] border border-line bg-panel px-2.5 py-1 text-[11.5px] text-ink-mid transition-all duration-200 hover:-translate-y-0.5 hover:border-ink-dim hover:text-ink"
                   >
                     {item}
                   </li>

@@ -15,7 +15,7 @@ export function Experience() {
         </div>
       </Reveal>
       <Reveal delay={80}>
-        <MacWindow title={experience.windowTitle}>
+        <MacWindow title={experience.windowTitle} className="hover-lift">
           <div className="grid gap-6 p-6 sm:grid-cols-[1fr_auto] sm:p-8">
             <div>
               <h3 className="font-display text-lg leading-snug text-ink sm:text-xl">

@@ -7,7 +7,7 @@ function ProjectCard({ project }: { project: ProjectEntry }) {
   return (
     <MacWindow
       title={project.windowTitle}
-      className={cn("h-full", project.featured && "md:col-span-2")}
+      className={cn("hover-lift h-full", project.featured && "md:col-span-2")}
     >
       <div className="flex h-full flex-col p-6 sm:p-7">
         <h3 className="font-display text-lg leading-snug text-ink sm:text-xl">
