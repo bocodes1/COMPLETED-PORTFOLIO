@@ -152,34 +152,56 @@ export const experience = {
   video: "/assets/work/guyu/GUYUDEMO.mp4",
 };
 
-/** §3.7 — order matters: Programming/Systems leads, Creative last */
-export const skillGroups: { group: string; items: string[] }[] = [
+/** §3.7 — order matters: Programming/Systems leads, Creative last.
+ *  core: used across many builds → rendered bright; otherwise dim
+ *  (single-project exposure). */
+export interface SkillItem {
+  name: string;
+  core?: boolean;
+}
+
+export const skillGroups: { group: string; items: SkillItem[] }[] = [
   {
     group: "Programming / Systems",
     items: [
-      "Python",
-      "asyncio",
-      "FastAPI",
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Swift/SwiftUI",
-      "websockets",
-      "SQLite/Supabase",
-      "PyTorch (basic)",
+      { name: "Python", core: true },
+      { name: "asyncio", core: true },
+      { name: "FastAPI" },
+      { name: "Next.js", core: true },
+      { name: "React", core: true },
+      { name: "TypeScript", core: true },
+      { name: "Swift/SwiftUI" },
+      { name: "websockets", core: true },
+      { name: "SQLite/Supabase", core: true },
+      { name: "PyTorch (basic)" },
     ],
   },
   {
     group: "Front-End / Web",
-    items: ["Next.js", "React", "HTML/CSS/JavaScript", "Shopify Liquid"],
+    items: [
+      { name: "Next.js", core: true },
+      { name: "React", core: true },
+      { name: "HTML/CSS/JavaScript", core: true },
+      { name: "Shopify Liquid", core: true },
+    ],
   },
   {
     group: "Ecommerce & Growth",
-    items: ["Shopify", "Google Ads", "Meta Ads", "GA4 / GTM", "creative testing"],
+    items: [
+      { name: "Shopify", core: true },
+      { name: "Google Ads" },
+      { name: "Meta Ads" },
+      { name: "GA4 / GTM", core: true },
+      { name: "creative testing" },
+    ],
   },
   {
     group: "Creative & Design",
-    items: ["Adobe Photoshop", "After Effects", "Premiere Pro"],
+    items: [
+      { name: "Adobe Photoshop", core: true },
+      { name: "After Effects" },
+      { name: "Premiere Pro" },
+    ],
   },
 ];
 
