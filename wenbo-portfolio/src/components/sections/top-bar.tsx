@@ -36,7 +36,7 @@ export function TopBar() {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-5 sm:px-8">
         <a href="#top" className="text-[13px] font-medium tracking-tight text-ink">
-          Wen&nbsp;Bo&nbsp;Zhao
+          Wenbo&nbsp;Zhao
         </a>
         <nav aria-label="Primary" className="flex items-center gap-4 sm:gap-6">
           {nav.map((item) => (

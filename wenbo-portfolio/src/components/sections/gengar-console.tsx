@@ -32,7 +32,7 @@ const COMMANDS: Record<string, string[]> = {
     "  clear     wipe the screen",
   ],
   whoami: [
-    "Wen Bo Zhao — builder · quant-track developer.",
+    "Wenbo Zhao — builder · quant-track developer.",
     "Commerce at UofT. Toronto / Vancouver, Canada.",
     "Ships end-to-end: trading systems, agent platforms, full products.",
   ],

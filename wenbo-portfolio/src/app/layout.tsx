@@ -17,11 +17,11 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wen Bo Zhao — Builder · Quant-Track Developer",
+  title: "Wenbo Zhao — Builder · Quant-Track Developer",
   description:
-    "Wen Bo Zhao. Commerce at UofT. I build and ship real things end-to-end — a low-latency trading engine, a multi-agent ops platform, full products. Technical depth, business judgment, fast execution.",
+    "Wenbo Zhao. Commerce at UofT. I build and ship real things end-to-end — a low-latency trading engine, a multi-agent ops platform, full products. Technical depth, business judgment, fast execution.",
   keywords: [
-    "Wen Bo Zhao",
+    "Wenbo Zhao",
     "quant developer",
     "trading systems",
     "low-latency",
@@ -32,19 +32,19 @@ export const metadata: Metadata = {
     "Vancouver",
     "University of Toronto",
   ],
-  authors: [{ name: "Wen Bo Zhao" }],
+  authors: [{ name: "Wenbo Zhao" }],
   openGraph: {
-    title: "Wen Bo Zhao — Builder · Quant-Track Developer",
+    title: "Wenbo Zhao — Builder · Quant-Track Developer",
     description:
       "I ship businesses — and systems that trade in milliseconds.",
     type: "website",
     locale: "en_CA",
-    siteName: "Wen Bo Zhao",
+    siteName: "Wenbo Zhao",
   },
   twitter: {
     card: "summary",
     creator: "@Boboscales",
-    title: "Wen Bo Zhao — Builder · Quant-Track Developer",
+    title: "Wenbo Zhao — Builder · Quant-Track Developer",
     description:
       "I ship businesses — and systems that trade in milliseconds.",
   },

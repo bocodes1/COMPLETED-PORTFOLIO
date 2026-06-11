@@ -42,7 +42,7 @@ export function Footer() {
     <footer className="border-t border-line">
       <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
         <p className="meta-label normal-case tracking-[0.08em]">
-          Wen Bo Zhao · Toronto / Vancouver, Canada · © Wen Bo Zhao.
+          Wenbo Zhao · Toronto / Vancouver, Canada · © Wenbo Zhao.
         </p>
       </div>
     </footer>

@@ -16,7 +16,7 @@ export function Hero() {
       </Reveal>
       <Reveal delay={160}>
         <p className="mt-10 max-w-[58ch] text-[13.5px] leading-[1.8] text-ink-mid">
-          Wen Bo Zhao. Commerce at UofT. I build and ship real things end-to-end
+          Wenbo Zhao. Commerce at UofT. I build and ship real things end-to-end
           — a low-latency trading engine, a multi-agent ops platform, full
           products. Technical depth, business judgment, fast execution.
         </p>
