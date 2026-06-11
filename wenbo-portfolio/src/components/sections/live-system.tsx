@@ -1,5 +1,8 @@
 import { MacWindow } from "@/components/ui/mac-window";
 import { Reveal } from "@/components/ui/reveal";
+import { EquityChart } from "@/components/ui/equity-chart";
+import { TickStream } from "@/components/ui/tick-stream";
+import { StatCounter } from "@/components/ui/stat-counter";
 
 /*
  * §3.3 — the showpiece: cex-lag-bot panel.
@@ -9,16 +12,12 @@ import { Reveal } from "@/components/ui/reveal";
  * data "illustrative" until then — do not remove that label without wiring
  * real data.
  */
-const telemetry = [
-  { label: "tick latency (p50)", value: "38 ms" },
-  { label: "fill rate", value: "64 %" },
+const telemetry: { label: string; value: number | string; suffix?: string }[] = [
+  { label: "tick latency (p50)", value: 38, suffix: " ms" },
+  { label: "fill rate", value: 64, suffix: " %" },
   { label: "maker / taker", value: "100 / 0" },
-  { label: "uptime", value: "212 h" },
+  { label: "uptime", value: 212, suffix: " h" },
 ];
-
-/* TODO: replace with points from a recorded backtest equity curve (§6.1). */
-const pnlPoints =
-  "0,46 20,44 40,45 60,41 80,42 100,38 120,39 140,36 160,37 180,33 200,34 220,31 240,32 260,28 280,29 300,26 320,27 340,24 360,25 380,21 400,22 420,19 440,20 460,17 480,15 500,16 520,13 540,14 560,11 580,9 600,10";
 
 const logLines = [
   { t: "14:02:11", msg: "regime filter pass — window armed, maker quote placed" },
@@ -60,33 +59,34 @@ export function LiveSystem() {
                   className="bg-panel px-4 py-4 transition-colors duration-200 hover:bg-titlebar"
                 >
                   <dt className="meta-label">{t.label}</dt>
-                  <dd className="tabular mt-2 text-lg text-ink">{t.value}</dd>
+                  <dd className="tabular mt-2 text-lg text-ink">
+                    {typeof t.value === "number" ? (
+                      <StatCounter value={t.value} suffix={t.suffix} />
+                    ) : (
+                      t.value
+                    )}
+                  </dd>
                 </div>
               ))}
             </dl>
 
-            {/* PnL curve — grayscale inline SVG */}
-            <figure className="mt-6 overflow-hidden rounded-[4px] border border-line bg-bg px-4 pt-4 pb-2">
-              <figcaption className="meta-label">equity curve — backtest (illustrative)</figcaption>
-              <svg
-                viewBox="0 0 600 56"
-                className="mt-2 h-16 w-full"
-                preserveAspectRatio="none"
-                role="img"
-                aria-label="Illustrative profit and loss curve trending gently upward"
-              >
-                <line x1="0" y1="46" x2="600" y2="46" stroke="var(--line)" strokeWidth="1" />
-                <polyline
-                  points={pnlPoints}
-                  fill="none"
-                  stroke="var(--ink)"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  opacity="0.85"
-                />
-              </svg>
-            </figure>
+            {/* charts — grayscale, interactive */}
+            <div className="mt-6 grid gap-4 lg:grid-cols-[2fr_1fr]">
+              <figure className="overflow-hidden rounded-[4px] border border-line bg-bg px-4 pt-4 pb-2">
+                <figcaption className="meta-label">
+                  equity curve — backtest (illustrative)
+                </figcaption>
+                <div className="mt-2">
+                  <EquityChart />
+                </div>
+              </figure>
+              <figure className="overflow-hidden rounded-[4px] border border-line bg-bg px-4 pt-4 pb-2">
+                <figcaption className="meta-label">tick latency (illustrative)</figcaption>
+                <div className="mt-2">
+                  <TickStream />
+                </div>
+              </figure>
+            </div>
 
             {/* short log — minimal, not a fake streaming terminal */}
             <div className="mt-6 space-y-1.5 text-[12px] leading-relaxed">

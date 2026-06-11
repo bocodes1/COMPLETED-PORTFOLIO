@@ -257,6 +257,13 @@
 .gengar-enter { animation: shadow-fade-up 0.7s ease-out both; }
 .gengar-exit  { animation: shadow-dissolve 0.9s ease-in both; }
 
+/* ─── Chart endpoint pulse ─── */
+@keyframes chart-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.chart-pulse { animation: chart-pulse 2.2s ease-in-out infinite; }
+
 /* ─── Modal window ─── */
 @keyframes modal-in {
   from { opacity: 0; transform: translateY(10px) scale(0.98); }
