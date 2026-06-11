@@ -106,6 +106,22 @@ function ProjectModal({
               {project.description}
             </p>
 
+            {project.detail && (
+              <div className="mt-6 border-t border-line pt-4">
+                <p className="meta-label mb-3">detail</p>
+                <ul className="space-y-2.5 text-[12.5px] leading-[1.7] text-ink-mid">
+                  {project.detail.map((line) => (
+                    <li key={line} className="flex gap-3">
+                      <span className="select-none text-ink-dim" aria-hidden="true">
+                        —
+                      </span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <dl className="mt-6 space-y-1.5 border-t border-line pt-4 text-[12px]">
               {project.meta.map((m) => (
                 <div key={m.label} className="flex gap-3">

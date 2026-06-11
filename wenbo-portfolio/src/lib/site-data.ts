@@ -23,6 +23,8 @@ export interface ProjectEntry {
   video?: string;
   /** repo exists but is private — modal says so instead of linking */
   privateRepo?: boolean;
+  /** expanded notes shown in the detail window — keep terse and truthful */
+  detail?: string[];
 }
 
 /*
@@ -47,6 +49,13 @@ export const projects: ProjectEntry[] = [
     // TODO: add GitHub link when the repo goes public (verified private as of 2026-06-10)
     privateRepo: true,
     featured: true,
+    detail: [
+      "Watches Binance spot over websocket and prices 5-minute binaries before the venue's quotes catch up.",
+      "Maker-only CLOB entries gated to the 0.50–0.60 confidence band; holds to resolution, so there is no exit-timing risk.",
+      "A regime filter stands the bot down in chop; a kill switch and risk sentinel cap exposure per window.",
+      "EV, fees, and microstructure are modeled explicitly — edge is computed, not assumed.",
+      "A shadow harness runs the full pipeline against a virtual portfolio before any live capital.",
+    ],
   },
   {
     id: "borina-mesh",
@@ -60,6 +69,13 @@ export const projects: ProjectEntry[] = [
       { label: "scope", value: "8 agents · tiered routing" },
     ],
     link: { label: "github", url: "https://github.com/bocodes1/borina-mesh" },
+    detail: [
+      "Seven specialized agents — CEO, researcher, trading intel, ecommerce scout, inbox triage and more — behind one dashboard.",
+      "FastAPI backend dispatches jobs through the Claude Agent SDK; APScheduler handles cron runs while you sleep.",
+      "Token-by-token SSE streaming, a live pub/sub activity feed, React Flow network graph, and an artifact browser for generated reports.",
+      "Runs 24/7 on a Mac Mini, reachable from any device over Tailscale.",
+      "Adding a new agent is ~30 lines of Python.",
+    ],
   },
   {
     id: "coordlayer",
@@ -73,6 +89,12 @@ export const projects: ProjectEntry[] = [
       { label: "scope", value: "cross-machine sync" },
     ],
     privateRepo: true,
+    detail: [
+      "A daemon on each machine holds local SQLite memory and a persistent WebSocket to the relay; Claude Code talks to it over MCP stdio.",
+      "One versioned, zod-validated envelope is the wire contract for both the WebSocket and local IPC — the relay can be rewritten in another language without breaking deployed daemons.",
+      "Autonomous by design: an auto-loaded team-context resource, proactive tool descriptions, and a git watcher that turns commits into shared memories.",
+      "Twelve per-phase verification scripts; the relay ships with a Dockerfile and Fly.io config.",
+    ],
   },
   {
     id: "returnclip",
@@ -87,6 +109,12 @@ export const projects: ProjectEntry[] = [
       // TODO: add `result:` row ONLY if it actually placed (spec §6.3) — confirm first
     ],
     link: { label: "github", url: "https://github.com/bocodes1/returnclip-hackathon" },
+    detail: [
+      "Scan a QR on the packaging, snap three guided photos, get a refund decision — no app install, under 30 seconds.",
+      "Gemini 2.0 Flash vision checks item condition and applies the merchant's own return policy; a PyTorch MobileNetV2 classifier runs side-by-side for comparison.",
+      "Swift/SwiftUI App Clip with zero external dependencies; Next.js API handles Shopify order lookup, Cloudinary evidence storage, and Supabase persistence.",
+      "Built and shipped at Hack Canada 2026 under the Reactiv ClipKit challenge.",
+    ],
   },
   {
     id: "r0am",
@@ -98,6 +126,12 @@ export const projects: ProjectEntry[] = [
       { label: "stack", value: "Shopify · Liquid · automation" },
       { label: "status", value: "in build" },
       { label: "scope", value: "brand → store → CRO loop" },
+    ],
+    detail: [
+      "Remote-work accessories brand built end-to-end: sourcing, identity, storefront, growth loop.",
+      "Six launch SKUs on a customized Shopify Dawn theme, pushed and verified via CLI.",
+      "An automated imagery pipeline generates product and lifestyle shots; a CRO-audit loop drives storefront iteration.",
+      "Currently pre-launch: store built, pricing and bundles in tuning.",
     ],
   },
 ];
